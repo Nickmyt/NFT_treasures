@@ -16,7 +16,7 @@ describe("NFTMarket Contract", function () {
     // Deploy the NFTMarket contract
     const NFTMarketFactory = await ethers.getContractFactory("NFTMarket");
     nftMarket = await NFTMarketFactory.connect(owner).deploy();
-    await nftMarket.deployed();
+    
 
 
     const tokenURI = "ipfs://example-token-uri";
@@ -36,6 +36,7 @@ describe("NFTMarket Contract", function () {
       // Create NFT and capture the transaction
       const tx = await nftMarket.connect(addr1).createNFT(tokenURI);
       const receipt = await tx.wait();
+      console.log('----------------' + receipt);
 
       // Check that NFTTransfer event was emitted
       const event = receipt.events?.find(e => e.event === "NFTTransfer");
