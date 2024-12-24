@@ -37,11 +37,12 @@ contract NFTMarket is ERC721URIStorage, Ownable {
     function createNFT(string calldata tokenURI) public {
         uint256 tokenId = Ids++;
 
-        console.log("Create an NFT from collection", msg.sender, tokenURI);
+        
         _safeMint(msg.sender, tokenId);
         _setTokenURI(tokenId, tokenURI);
+        
 
-        emit NFTTransfer(Ids, address(0), tokenURI, 0, "NFT created");
+        emit NFTTransfer(tokenId, address(0), tokenURI, 0, "NFT created");
     }
 
     function listNFT(uint256 tokenId, uint256 price) public {
@@ -65,6 +66,7 @@ contract NFTMarket is ERC721URIStorage, Ownable {
         require(listing.price == msg.value, "Price is not correct");
         transferFrom(address(this), msg.sender, tokenId);
         payable(msg.sender).transfer((listing.price * 97) / 100);
+
         emit NFTTransfer(tokenId, msg.sender, "", 0, "NFT Bought");
     }
 

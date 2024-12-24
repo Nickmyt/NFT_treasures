@@ -40,6 +40,7 @@ describe("NFTMarket Contract", function () {
 
       // Check that NFTTransfer event was emitted
       const event = receipt.events?.find(e => e.event === "NFTTransfer");
+      console.log();
       expect(event).to.not.be.undefined;
       expect(event?.args?.tokenID).to.equal(2); // First token ID should be 1
       expect(event?.args?.from).to.equal(ethers.constants.AddressZero);
@@ -186,7 +187,6 @@ describe("NFTMarket Contract", function () {
     it("Should allow the owner to withdraw the contract balance", async function () {
       const price = ethers.utils.parseEther("1");
       await nftMarket.connect(addr1).listNFT(0, price);
-
       await nftMarket.connect(addr2).buyNFT(0, { value: price });
 
       const contractBalanceBefore = await ethers.provider.getBalance(nftMarket.address);
