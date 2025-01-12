@@ -37,11 +37,9 @@ contract NFTMarket is ERC721URIStorage, Ownable {
     function createNFT(string calldata tokenURI) public {
         uint256 tokenId = Ids++;
 
-        
         _safeMint(msg.sender, tokenId);
         _setTokenURI(tokenId, tokenURI);
         
-
         emit NFTTransfer(tokenId, address(0), tokenURI, 0, "NFT created");
     }
 
