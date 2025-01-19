@@ -36,10 +36,8 @@ contract NFTMarket is ERC721URIStorage, Ownable {
 
     function createNFT(string calldata tokenURI) public {
         uint256 tokenId = Ids++;
-
         _safeMint(msg.sender, tokenId);
         _setTokenURI(tokenId, tokenURI);
-        
         emit NFTTransfer(tokenId, address(0), tokenURI, 0, "NFT created");
     }
 
@@ -48,13 +46,7 @@ contract NFTMarket is ERC721URIStorage, Ownable {
         approve(address(this), tokenId);
         transferFrom(msg.sender, address(this), tokenId);
         _listings[tokenId] = NFTListing(price, msg.sender);
-        emit NFTTransfer(
-            tokenId,
-            address(this),
-            "",
-            price,
-            "NFT has been listed"
-        );
+        emit NFTTransfer( tokenId, address(this), "", price,"NFT has been listed");
     }
 
     //TODO : Need to use safe math for the proper calculation
@@ -62,9 +54,9 @@ contract NFTMarket is ERC721URIStorage, Ownable {
         NFTListing memory listing = _listings[tokenId];
         require(listing.price > 0, "NFT must have a non-zero price");
         require(listing.price == msg.value, "Price is not correct");
-        transferFrom(address(this), msg.sender, tokenId);
+        ERC721(address(this)).transferFrom(address(this), msg.sender, tokenId);
+        clearListing(tokenId);
         payable(msg.sender).transfer((listing.price * 97) / 100);
-
         emit NFTTransfer(tokenId, msg.sender, "", 0, "NFT Bought");
     }
 
@@ -73,7 +65,7 @@ contract NFTMarket is ERC721URIStorage, Ownable {
         NFTListing memory listing = _listings[tokenId];
         require(listing.price > 0, "NFTmust exist and have a non-zero price");
         require(listing.seller == msg.sender, "You must be the NFTs owner");
-        transferFrom(address(this), msg.sender, tokenId);
+        ERC721(address(this)).transferFrom(address(this), msg.sender, tokenId);
         clearListing(tokenId);
         emit NFTTransfer(tokenId, msg.sender, "", 0, "Listing Cleared");
     }
@@ -81,7 +73,7 @@ contract NFTMarket is ERC721URIStorage, Ownable {
     function withdrawBalance() public onlyOwner {
         uint256 balance = address(this).balance;
         require(balance > 0, "The funds need to be more than zero");
-        payable(owner()).transfer(balance);
+        payable(msg.sender).transfer(balance);
     }
 
     function clearListing(uint256 tokenId) public {
